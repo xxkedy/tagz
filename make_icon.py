@@ -1,11 +1,12 @@
-# Tagz icon generator — price tag symbol and uniform wordmark
+# Tagz icon generator — price tag symbol and Appz optical-size matched wordmark
 from PIL import Image, ImageDraw, ImageFont
 
 S = 1024
 WHITE = "#ffffff"
 BLACK = "#000000"
 FONT = "Anton.ttf"
-WORDMARK_SIZE = 205
+WORDMARK_SIZE = 265
+WORDMARK_TOP = 436
 LINE_WIDTH = 26
 
 
@@ -28,7 +29,7 @@ def draw_price_tag(draw, cx, cy):
 def draw_wordmark(draw):
     text = "Tagz"
     font = ImageFont.truetype(FONT, WORDMARK_SIZE)
-    gap = 7
+    gap = 0
     widths = []
     for char in text:
         box = draw.textbbox((0, 0), char, font=font)
@@ -36,15 +37,15 @@ def draw_wordmark(draw):
     total = sum(widths) + gap * (len(text) - 1)
     x = (S - total) / 2
     for char, width in zip(text, widths):
-        draw.text((x, 860), char, font=font, fill=WHITE, anchor="ls")
+        draw.text((x, WORDMARK_TOP), char, font=font, fill=WHITE)
         x += width + gap
 
 
 def make_icon():
     image = Image.new("RGB", (S, S), BLACK)
     draw = ImageDraw.Draw(image)
-    draw.rectangle([120, 112, S-120, 126], fill=WHITE)
-    draw.rectangle([120, S-126, S-120, S-112], fill=WHITE)
+    draw.rectangle([132, 168, S-132, 180], fill=WHITE)
+    draw.rectangle([132, 844, S-132, 856], fill=WHITE)
     draw_price_tag(draw, S/2, 330)
     draw_wordmark(draw)
     return image
