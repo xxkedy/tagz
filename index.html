@@ -28,13 +28,12 @@ header .by{font-size:12px;color:var(--sub)}
 .chip{border:1px solid var(--line);background:#0f1417;color:var(--txt);border-radius:999px;padding:9px 13px;font-size:14px;min-height:38px}
 .chip.on{background:var(--amber);border-color:var(--amber);color:#141414;font-weight:700}
 .chip.key.on{background:var(--cyan);border-color:var(--cyan)}
-.chip.mood.on{background:var(--green);border-color:var(--green)}
+.chip.feature.on{background:var(--green);border-color:var(--green)}
 .bpmrow{display:flex;align-items:center;gap:10px;margin-top:9px}
 .bpmrow button{width:46px;height:42px;border-radius:11px;border:1px solid var(--line);background:#0f1417;color:var(--amber);font-size:20px;font-weight:700}
 .bpmrow .v{font-size:26px;font-weight:800;min-width:64px;text-align:center;color:var(--amber)}
 .spin{width:100%;padding:15px;border:none;border-radius:14px;background:linear-gradient(135deg,var(--amber),var(--amber2));color:#141414;font-size:17px;font-weight:900;letter-spacing:1px;margin:2px 0 12px}
 .spin:active{transform:scale(.98)}
-/* output panel */
 .out{position:fixed;left:0;right:0;bottom:0;background:#12171a;border-top:1px solid var(--line);padding:10px 14px calc(12px + env(safe-area-inset-bottom));max-width:560px;margin:0 auto}
 .tabs{display:flex;gap:6px;margin-bottom:8px}
 .tab{flex:1;padding:8px 0;text-align:center;border-radius:9px;border:1px solid var(--line);background:#0f1417;color:var(--sub);font-size:13px;font-weight:700}
@@ -44,7 +43,6 @@ header .by{font-size:12px;color:var(--sub)}
 .obtns button{flex:1;padding:12px;border:none;border-radius:11px;font-size:15px;font-weight:800}
 #copyBtn{background:var(--cyan);color:#0b2226}
 #saveBtn{background:var(--green);color:#0b2415}
-/* log */
 .loghead{display:flex;justify-content:space-between;align-items:baseline;margin:4px 2px 8px}
 .loghead h2{font-size:13px;color:var(--sub);letter-spacing:1.5px}
 .loghead .cnt{font-size:12px;color:var(--green);font-weight:700}
@@ -61,29 +59,29 @@ footer{color:#5a666c;font-size:11px;text-align:center;margin-top:18px}
 </style>
 </head>
 <body>
-<header><h1>Tag<span>z</span></h1><div class="by">beat name slot · kedy on keys</div></header>
+<header><h1>Tag<span>z</span></h1><div class="by">beat file naming · kedy</div></header>
 
-<button class="spin" id="spinBtn">🎰 SPIN（名前・キー・雰囲気ガチャ）</button>
+<button class="spin" id="spinBtn">🎰 SPIN（STYLE・FEATURE・KEY）</button>
 
 <div class="card">
-  <h2>🏷 NAME WORD <span class="hint">ファイル名に入る英単語</span></h2>
-  <div class="chips" id="nameChips"></div>
+  <h2>🎛 STYLE <span class="hint">ビートの系統</span></h2>
+  <div class="chips" id="styleChips"></div>
 </div>
 
 <div class="card">
-  <h2>🎚 BPM <span class="hint">165軸</span></h2>
+  <h2>✨ FEATURE <span class="hint">音色・質感・雰囲気</span></h2>
+  <div class="chips" id="featureChips"></div>
+</div>
+
+<div class="card">
+  <h2>🎚 BPM <span class="hint">±1で微調整</span></h2>
   <div class="chips" id="bpmChips"></div>
   <div class="bpmrow"><button id="bpmDown">−</button><div class="v" id="bpmVal">165</div><button id="bpmUp">＋</button></div>
 </div>
 
 <div class="card">
-  <h2>🎹 KEY <span class="hint">メジャーがデフォ（R8.7.15方針）</span></h2>
+  <h2>🎹 KEY <span class="hint">FILEは Am / C 形式</span></h2>
   <div class="chips" id="keyChips"></div>
-</div>
-
-<div class="card">
-  <h2>🎨 雰囲気 <span class="hint">出品ブロック用・2個まで</span></h2>
-  <div class="chips" id="moodChips"></div>
 </div>
 
 <div class="card">
@@ -94,7 +92,7 @@ footer{color:#5a666c;font-size:11px;text-align:center;margin-top:18px}
 <div class="loghead"><h2>📓 制作ログ</h2><div class="cnt" id="logCnt"></div></div>
 <div id="logList"></div>
 
-<footer>Tagz v2 · 2026.07.15</footer>
+<footer>Tagz v2.1 · 2026.08.20</footer>
 
 <div class="out">
   <div class="tabs">
@@ -108,38 +106,46 @@ footer{color:#5a666c;font-size:11px;text-align:center;margin-top:18px}
 <div class="toast" id="toast">Copied</div>
 
 <script>
-const NAMES=["dreamy","icy","hazy","floaty","glassy","drain","cloud","angel","ghost","crystal","velvet","neon","misty","frozen","lunar","halo","fairy","aqua","static","bloom"];
-const KEYS=["Cメジャー","Gメジャー","Dメジャー","Aメジャー","Eメジャー","Fメジャー","B♭メジャー","Aマイナー","Fマイナー","Cマイナー"];
-const MAJORS=KEYS.slice(0,7);
-const MOODS=["浮遊","透明","揺らぎ","夜ドライブ","切ない","冷たい","幻想","星空","無重力","甘い","エモ","霧"];
+const STYLES=["trap","plug","rage","jerk","drill","cloud","pop","afro","digicore"];
+const FEATURES=["piano","bell","guitar","synth","strings","dark","chill","airy","hard","sad"];
+const KEYS=[
+  {label:"Cmaj",file:"C"},{label:"C#maj",file:"C#"},{label:"Dmaj",file:"D"},{label:"D#maj",file:"D#"},
+  {label:"Emaj",file:"E"},{label:"Fmaj",file:"F"},{label:"F#maj",file:"F#"},{label:"Gmaj",file:"G"},
+  {label:"G#maj",file:"G#"},{label:"Amaj",file:"A"},{label:"A#maj",file:"A#"},{label:"Bmaj",file:"B"},
+  {label:"Cmin",file:"Cm"},{label:"C#min",file:"C#m"},{label:"Dmin",file:"Dm"},{label:"D#min",file:"D#m"},
+  {label:"Emin",file:"Em"},{label:"Fmin",file:"Fm"},{label:"F#min",file:"F#m"},{label:"Gmin",file:"Gm"},
+  {label:"G#min",file:"G#m"},{label:"Amin",file:"Am"},{label:"A#min",file:"A#m"},{label:"Bmin",file:"Bm"}
+];
 const TYPES=["Bladee","Ecco2k","Playboi Carti","A$AP Rocky","Travis Scott","Future","Drain Gang"];
 const BPMS=[140,150,160,165,170,175];
 const LKEY="tagz_v2_log";
 
-let st={name:"dreamy",bpm:165,key:"Cメジャー",moods:["浮遊"],type:"Bladee",fmt:"file"};
+let st={style:"trap",feature:"piano",bpm:165,key:"Am",type:"Bladee",fmt:"file"};
 
-function reiwa(){const n=new Date();return `R${n.getFullYear()-2018}.${n.getMonth()+1}.${n.getDate()}`;}
-function fname(){return `${reiwa()}.${st.name}`;}
-function listing(){return `【出品】\nファイル名：${fname()}\nBPM：${st.bpm}\nキー：${st.key}\n雰囲気：${st.moods.join("・")||"—"}`;}
-function yt(){return `[FREE] ${st.type} Type Beat "${st.name}" | ${st.bpm} BPM (prod. kedy on keys)`;}
+function yymmdd(){
+  const n=new Date();
+  const yy=String(n.getFullYear()).slice(-2);
+  const mm=String(n.getMonth()+1).padStart(2,"0");
+  const dd=String(n.getDate()).padStart(2,"0");
+  return `${yy}${mm}${dd}`;
+}
+function fname(){return `${st.bpm}_${st.key}_${st.style}-${st.feature}_${yymmdd()}_kedy`;}
+function listing(){return `【出品】\nファイル名：${fname()}\nBPM：${st.bpm}\nキー：${st.key}\nSTYLE：${st.style}\nFEATURE：${st.feature}`;}
+function yt(){return `[FREE] ${st.type} Type Beat "${st.style}-${st.feature}" | ${st.bpm} BPM (prod. kedy)`;}
 function outText(){return st.fmt==="file"?fname():st.fmt==="listing"?listing():yt();}
 
 function chip(label,cls,on,fn){const b=document.createElement("button");b.className="chip "+cls+(on?" on":"");b.textContent=label;b.onclick=fn;return b;}
 
 function render(){
-  const n=document.getElementById("nameChips");n.innerHTML="";
-  NAMES.forEach(w=>n.appendChild(chip(w,"",st.name===w,()=>{st.name=w;render();})));
+  const s=document.getElementById("styleChips");s.innerHTML="";
+  STYLES.forEach(v=>s.appendChild(chip(v,"",st.style===v,()=>{st.style=v;render();})));
+  const f=document.getElementById("featureChips");f.innerHTML="";
+  FEATURES.forEach(v=>f.appendChild(chip(v,"feature",st.feature===v,()=>{st.feature=v;render();})));
   const b=document.getElementById("bpmChips");b.innerHTML="";
   BPMS.forEach(v=>b.appendChild(chip(v,"",st.bpm===v,()=>{st.bpm=v;render();})));
   document.getElementById("bpmVal").textContent=st.bpm;
   const k=document.getElementById("keyChips");k.innerHTML="";
-  KEYS.forEach(v=>k.appendChild(chip(v.replace("メジャー","maj").replace("マイナー","min"),"key",st.key===v,()=>{st.key=v;render();})));
-  const m=document.getElementById("moodChips");m.innerHTML="";
-  MOODS.forEach(v=>m.appendChild(chip(v,"mood",st.moods.includes(v),()=>{
-    if(st.moods.includes(v))st.moods=st.moods.filter(x=>x!==v);
-    else{st.moods.push(v);if(st.moods.length>2)st.moods.shift();}
-    render();
-  })));
+  KEYS.forEach(v=>k.appendChild(chip(v.label,"key",st.key===v.file,()=>{st.key=v.file;render();})));
   const t=document.getElementById("typeChips");t.innerHTML="";
   TYPES.forEach(v=>t.appendChild(chip(v,"",st.type===v,()=>{st.type=v;render();})));
   document.querySelectorAll(".tab").forEach(el=>el.classList.toggle("on",el.dataset.f===st.fmt));
@@ -154,11 +160,12 @@ document.getElementById("bpmDown").onclick=()=>{st.bpm--;render();};
 const pick=a=>a[Math.floor(Math.random()*a.length)];
 document.getElementById("spinBtn").onclick=()=>{
   let i=0;const iv=setInterval(()=>{
-    document.getElementById("oText").textContent=`${reiwa()}.${pick(NAMES)}`;
+    const rs=pick(STYLES),rf=pick(FEATURES),rk=pick(KEYS).file;
+    document.getElementById("oText").textContent=`${st.bpm}_${rk}_${rs}-${rf}_${yymmdd()}_kedy`;
     if(++i>=8){clearInterval(iv);
-      st.name=pick(NAMES);
-      st.key=Math.random()<0.8?pick(MAJORS):pick(KEYS.slice(7));
-      st.moods=[pick(MOODS)];if(Math.random()<0.5){const m2=pick(MOODS);if(!st.moods.includes(m2))st.moods.push(m2);}
+      st.style=pick(STYLES);
+      st.feature=pick(FEATURES);
+      st.key=pick(KEYS).file;
       st.fmt="file";render();
     }
   },45);
@@ -176,7 +183,7 @@ function getLog(){try{return JSON.parse(localStorage.getItem(LKEY))||[];}catch(e
 function setLog(a){try{localStorage.setItem(LKEY,JSON.stringify(a));}catch(e){}}
 document.getElementById("saveBtn").onclick=()=>{
   const a=getLog();
-  a.unshift({f:fname(),b:st.bpm,k:st.key,m:st.moods.join("・"),ts:Date.now()});
+  a.unshift({f:fname(),b:st.bpm,k:st.key,s:st.style,ft:st.feature,ts:Date.now()});
   setLog(a);toast("Saved");renderLog();
 };
 function renderLog(){
@@ -186,8 +193,9 @@ function renderLog(){
   if(!a.length){list.innerHTML='<div class="empty">まだログなし。SPINして💾で貯まってく</div>';return;}
   a.forEach((e,i)=>{
     const d=document.createElement("div");d.className="logitem";
-    d.innerHTML=`<div class="li-main"><div class="li-name">${e.f}</div><div class="li-meta">${e.b}BPM · ${e.k} · ${e.m||"—"}</div></div>`;
-    const c=document.createElement("button");c.textContent="出品";c.onclick=()=>copyText(`【出品】\nファイル名：${e.f}\nBPM：${e.b}\nキー：${e.k}\n雰囲気：${e.m||"—"}`);
+    const detail=e.s?`${e.s}-${e.ft||"—"}`:(e.m||"—");
+    d.innerHTML=`<div class="li-main"><div class="li-name">${e.f}</div><div class="li-meta">${e.b}BPM · ${e.k} · ${detail}</div></div>`;
+    const c=document.createElement("button");c.textContent="出品";c.onclick=()=>copyText(`【出品】\nファイル名：${e.f}\nBPM：${e.b}\nキー：${e.k}\nSTYLE / FEATURE：${detail}`);
     const x=document.createElement("button");x.className="del";x.textContent="✕";x.onclick=()=>{const b=getLog();b.splice(i,1);setLog(b);renderLog();};
     d.appendChild(c);d.appendChild(x);list.appendChild(d);
   });
