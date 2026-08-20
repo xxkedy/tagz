@@ -80,7 +80,7 @@ footer{color:#5a666c;font-size:11px;text-align:center;margin-top:18px}
 </div>
 
 <div class="card">
-  <h2>🎹 KEY <span class="hint">FILEは Am / C 形式</span></h2>
+  <h2>🎹 KEY <span class="hint">メジャー=A / マイナー=Am</span></h2>
   <div class="chips" id="keyChips"></div>
 </div>
 
@@ -92,7 +92,7 @@ footer{color:#5a666c;font-size:11px;text-align:center;margin-top:18px}
 <div class="loghead"><h2>📓 制作ログ</h2><div class="cnt" id="logCnt"></div></div>
 <div id="logList"></div>
 
-<footer>Tagz v2.1 · 2026.08.20</footer>
+<footer>Tagz v2.2 · 2026.08.20</footer>
 
 <div class="out">
   <div class="tabs">
@@ -107,14 +107,14 @@ footer{color:#5a666c;font-size:11px;text-align:center;margin-top:18px}
 
 <script>
 const STYLES=["trap","plug","rage","jerk","drill","cloud","pop","afro","digicore"];
-const FEATURES=["piano","bell","guitar","synth","strings","dark","chill","airy","hard","sad"];
+const FEATURES=["piano","bell","guitar","synth","strings","dark","bright","chill","airy","hard","soft","sad"];
 const KEYS=[
-  {label:"Cmaj",file:"C"},{label:"C#maj",file:"C#"},{label:"Dmaj",file:"D"},{label:"D#maj",file:"D#"},
-  {label:"Emaj",file:"E"},{label:"Fmaj",file:"F"},{label:"F#maj",file:"F#"},{label:"Gmaj",file:"G"},
-  {label:"G#maj",file:"G#"},{label:"Amaj",file:"A"},{label:"A#maj",file:"A#"},{label:"Bmaj",file:"B"},
-  {label:"Cmin",file:"Cm"},{label:"C#min",file:"C#m"},{label:"Dmin",file:"Dm"},{label:"D#min",file:"D#m"},
-  {label:"Emin",file:"Em"},{label:"Fmin",file:"Fm"},{label:"F#min",file:"F#m"},{label:"Gmin",file:"Gm"},
-  {label:"G#min",file:"G#m"},{label:"Amin",file:"Am"},{label:"A#min",file:"A#m"},{label:"Bmin",file:"Bm"}
+  {label:"C",file:"C"},{label:"Db",file:"Db"},{label:"D",file:"D"},{label:"Eb",file:"Eb"},
+  {label:"E",file:"E"},{label:"F",file:"F"},{label:"F#",file:"F#"},{label:"G",file:"G"},
+  {label:"Ab",file:"Ab"},{label:"A",file:"A"},{label:"Bb",file:"Bb"},{label:"B",file:"B"},
+  {label:"Cm",file:"Cm"},{label:"C#m",file:"C#m"},{label:"Dm",file:"Dm"},{label:"Ebm",file:"Ebm"},
+  {label:"Em",file:"Em"},{label:"Fm",file:"Fm"},{label:"F#m",file:"F#m"},{label:"Gm",file:"Gm"},
+  {label:"G#m",file:"G#m"},{label:"Am",file:"Am"},{label:"Bbm",file:"Bbm"},{label:"Bm",file:"Bm"}
 ];
 const TYPES=["Bladee","Ecco2k","Playboi Carti","A$AP Rocky","Travis Scott","Future","Drain Gang"];
 const BPMS=[140,150,160,165,170,175];
