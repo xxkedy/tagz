@@ -7,13 +7,13 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Tagz">
 <meta name="theme-color" content="#0e1113">
-<link rel="manifest" href="manifest.json?v=20260718-3">
-<link rel="apple-touch-icon" href="icon-180.png?v=20260718-3">
+<link rel="manifest" href="manifest.json?v=20260903-1">
+<link rel="apple-touch-icon" href="icon-180.png?v=20260903-1">
 <title>Tagz</title>
 <style>
 :root{
   --bg:#0e1113; --card:#161b1e; --line:#242c31; --txt:#e8edef; --sub:#8b979d;
-  --amber:#ffb340; --amber2:#f5a623; --cyan:#3fd4e6; --green:#38d283; --red:#ff6b6b;
+  --amber:#ffb340; --amber2:#f5a623; --cyan:#3fd4e6; --green:#38d283; --red:#ff6b6b; --violet:#b69cff;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans",sans-serif;padding:16px 14px 220px;max-width:560px;margin:0 auto}
@@ -28,7 +28,9 @@ header .by{font-size:12px;color:var(--sub)}
 .chip{border:1px solid var(--line);background:#0f1417;color:var(--txt);border-radius:999px;padding:9px 13px;font-size:14px;min-height:38px}
 .chip.on{background:var(--amber);border-color:var(--amber);color:#141414;font-weight:700}
 .chip.key.on{background:var(--cyan);border-color:var(--cyan)}
-.chip.feature.on{background:var(--green);border-color:var(--green)}
+.chip.sound.on{background:var(--green);border-color:var(--green)}
+.chip.vibe.on{background:var(--violet);border-color:var(--violet);color:#17121f}
+.chip.tag.on{background:#25343a;border-color:var(--cyan);color:var(--cyan)}
 .bpmrow{display:flex;align-items:center;gap:10px;margin-top:9px}
 .bpmrow button{width:46px;height:42px;border-radius:11px;border:1px solid var(--line);background:#0f1417;color:var(--amber);font-size:20px;font-weight:700}
 .bpmrow .v{font-size:26px;font-weight:800;min-width:64px;text-align:center;color:var(--amber)}
@@ -61,7 +63,7 @@ footer{color:#5a666c;font-size:11px;text-align:center;margin-top:18px}
 <body>
 <header><h1>Tag<span>z</span></h1><div class="by">beat file naming · kedy</div></header>
 
-<button class="spin" id="spinBtn">🎰 SPIN（STYLE・FEATURE・KEY）</button>
+<button class="spin" id="spinBtn">🎰 SPIN（STYLE・SOUND・VIBE・KEY）</button>
 
 <div class="card">
   <h2>🎛 STYLE <span class="hint">ビートの系統</span></h2>
@@ -69,8 +71,23 @@ footer{color:#5a666c;font-size:11px;text-align:center;margin-top:18px}
 </div>
 
 <div class="card">
-  <h2>✨ FEATURE <span class="hint">音色・質感・雰囲気</span></h2>
-  <div class="chips" id="featureChips"></div>
+  <h2>🎹 SOUND <span class="hint">主な音・質感</span></h2>
+  <div class="chips" id="soundChips"></div>
+</div>
+
+<div class="card">
+  <h2>🌫 VIBE <span class="hint">雰囲気</span></h2>
+  <div class="chips" id="vibeChips"></div>
+</div>
+
+<div class="card">
+  <h2>🏷 TAG <span class="hint">任意・複数可</span></h2>
+  <div class="chips" id="tagChips"></div>
+</div>
+
+<div class="card">
+  <h2>🔢 DUP <span class="hint">同名時だけ 02 / 03</span></h2>
+  <div class="chips" id="dupChips"></div>
 </div>
 
 <div class="card">
@@ -80,7 +97,7 @@ footer{color:#5a666c;font-size:11px;text-align:center;margin-top:18px}
 </div>
 
 <div class="card">
-  <h2>🎹 KEY <span class="hint">メジャー=A / マイナー=Am</span></h2>
+  <h2>🎼 KEY <span class="hint">正規表記を固定</span></h2>
   <div class="chips" id="keyChips"></div>
 </div>
 
@@ -92,7 +109,7 @@ footer{color:#5a666c;font-size:11px;text-align:center;margin-top:18px}
 <div class="loghead"><h2>📓 制作ログ</h2><div class="cnt" id="logCnt"></div></div>
 <div id="logList"></div>
 
-<footer>Tagz v2.2 · 2026.08.20</footer>
+<footer>Tagz v3.0 · 2026.09.03</footer>
 
 <div class="out">
   <div class="tabs">
@@ -106,8 +123,11 @@ footer{color:#5a666c;font-size:11px;text-align:center;margin-top:18px}
 <div class="toast" id="toast">Copied</div>
 
 <script>
-const STYLES=["trap","plug","rage","jerk","drill","cloud","pop","afro","digicore"];
-const FEATURES=["piano","bell","guitar","synth","strings","dark","bright","chill","airy","hard","soft","sad"];
+const STYLES=["trap","plug","rage","jerk","drill","cloud","pop","lo-fi","afrobeat","digicore"];
+const SOUNDS=["piano","bell","guitar","synth","strings","organ","pad","chorus","vocal-chop","sampling","808","drum","marimba"];
+const VIBES=["dark","bright","chill","dreamy","airy","hard","soft","sad"];
+const TAGS=["bpm-change","switch","vocal-ready","sampling"];
+const DUPS=["","02","03"];
 const KEYS=[
   {label:"C",file:"C"},{label:"Db",file:"Db"},{label:"D",file:"D"},{label:"Eb",file:"Eb"},
   {label:"E",file:"E"},{label:"F",file:"F"},{label:"F#",file:"F#"},{label:"G",file:"G"},
@@ -117,10 +137,10 @@ const KEYS=[
   {label:"G#m",file:"G#m"},{label:"Am",file:"Am"},{label:"Bbm",file:"Bbm"},{label:"Bm",file:"Bm"}
 ];
 const TYPES=["Bladee","Ecco2k","Playboi Carti","A$AP Rocky","Travis Scott","Future","Drain Gang"];
-const BPMS=[140,150,160,165,170,175];
+const BPMS=[140,145,150,155,160,165,170,175,180];
 const LKEY="tagz_v2_log";
 
-let st={style:"trap",feature:"piano",bpm:165,key:"Am",type:"Bladee",fmt:"file"};
+let st={style:"trap",sound:"piano",vibe:"dark",tags:[],dup:"",bpm:165,key:"Am",type:"Bladee",fmt:"file"};
 
 function yymmdd(){
   const n=new Date();
@@ -129,9 +149,15 @@ function yymmdd(){
   const dd=String(n.getDate()).padStart(2,"0");
   return `${yy}${mm}${dd}`;
 }
-function fname(){return `${st.bpm}_${st.key}_${st.style}-${st.feature}_${yymmdd()}_kedy`;}
-function listing(){return `【出品】\nファイル名：${fname()}\nBPM：${st.bpm}\nキー：${st.key}\nSTYLE：${st.style}\nFEATURE：${st.feature}`;}
-function yt(){return `[FREE] ${st.type} Type Beat "${st.style}-${st.feature}" | ${st.bpm} BPM (prod. kedy)`;}
+function fname(){
+  return [st.style,st.sound,st.vibe,String(st.bpm),st.key,...st.tags,...(st.dup?[st.dup]:[]),yymmdd(),"kedy"].join("_");
+}
+function listing(){
+  const tagLine=st.tags.length?`\nTAG：${st.tags.join(", ")}`:"";
+  const dupLine=st.dup?`\nDUP：${st.dup}`:"";
+  return `【出品】\nファイル名：${fname()}\nSTYLE：${st.style}\nSOUND：${st.sound}\nVIBE：${st.vibe}\nBPM：${st.bpm}\nキー：${st.key}${tagLine}${dupLine}`;
+}
+function yt(){return `[FREE] ${st.type} Type Beat "${st.style} ${st.sound} ${st.vibe}" | ${st.bpm} BPM | ${st.key} (prod. kedy)`;}
 function outText(){return st.fmt==="file"?fname():st.fmt==="listing"?listing():yt();}
 
 function chip(label,cls,on,fn){const b=document.createElement("button");b.className="chip "+cls+(on?" on":"");b.textContent=label;b.onclick=fn;return b;}
@@ -139,15 +165,32 @@ function chip(label,cls,on,fn){const b=document.createElement("button");b.classN
 function render(){
   const s=document.getElementById("styleChips");s.innerHTML="";
   STYLES.forEach(v=>s.appendChild(chip(v,"",st.style===v,()=>{st.style=v;render();})));
-  const f=document.getElementById("featureChips");f.innerHTML="";
-  FEATURES.forEach(v=>f.appendChild(chip(v,"feature",st.feature===v,()=>{st.feature=v;render();})));
+
+  const snd=document.getElementById("soundChips");snd.innerHTML="";
+  SOUNDS.forEach(v=>snd.appendChild(chip(v,"sound",st.sound===v,()=>{st.sound=v;render();})));
+
+  const vb=document.getElementById("vibeChips");vb.innerHTML="";
+  VIBES.forEach(v=>vb.appendChild(chip(v,"vibe",st.vibe===v,()=>{st.vibe=v;render();})));
+
+  const tg=document.getElementById("tagChips");tg.innerHTML="";
+  TAGS.forEach(v=>tg.appendChild(chip(v,"tag",st.tags.includes(v),()=>{
+    st.tags=st.tags.includes(v)?st.tags.filter(x=>x!==v):[...st.tags,v];
+    render();
+  })));
+
+  const dp=document.getElementById("dupChips");dp.innerHTML="";
+  DUPS.forEach(v=>dp.appendChild(chip(v||"なし","tag",st.dup===v,()=>{st.dup=v;render();})));
+
   const b=document.getElementById("bpmChips");b.innerHTML="";
   BPMS.forEach(v=>b.appendChild(chip(v,"",st.bpm===v,()=>{st.bpm=v;render();})));
   document.getElementById("bpmVal").textContent=st.bpm;
+
   const k=document.getElementById("keyChips");k.innerHTML="";
   KEYS.forEach(v=>k.appendChild(chip(v.label,"key",st.key===v.file,()=>{st.key=v.file;render();})));
+
   const t=document.getElementById("typeChips");t.innerHTML="";
   TYPES.forEach(v=>t.appendChild(chip(v,"",st.type===v,()=>{st.type=v;render();})));
+
   document.querySelectorAll(".tab").forEach(el=>el.classList.toggle("on",el.dataset.f===st.fmt));
   document.getElementById("oText").textContent=outText();
   renderLog();
@@ -160,12 +203,15 @@ document.getElementById("bpmDown").onclick=()=>{st.bpm--;render();};
 const pick=a=>a[Math.floor(Math.random()*a.length)];
 document.getElementById("spinBtn").onclick=()=>{
   let i=0;const iv=setInterval(()=>{
-    const rs=pick(STYLES),rf=pick(FEATURES),rk=pick(KEYS).file;
-    document.getElementById("oText").textContent=`${st.bpm}_${rk}_${rs}-${rf}_${yymmdd()}_kedy`;
+    const rs=pick(STYLES),snd=pick(SOUNDS),vb=pick(VIBES),rk=pick(KEYS).file;
+    document.getElementById("oText").textContent=[rs,snd,vb,String(st.bpm),rk,yymmdd(),"kedy"].join("_");
     if(++i>=8){clearInterval(iv);
       st.style=pick(STYLES);
-      st.feature=pick(FEATURES);
+      st.sound=pick(SOUNDS);
+      st.vibe=pick(VIBES);
       st.key=pick(KEYS).file;
+      st.tags=[];
+      st.dup="";
       st.fmt="file";render();
     }
   },45);
@@ -183,7 +229,7 @@ function getLog(){try{return JSON.parse(localStorage.getItem(LKEY))||[];}catch(e
 function setLog(a){try{localStorage.setItem(LKEY,JSON.stringify(a));}catch(e){}}
 document.getElementById("saveBtn").onclick=()=>{
   const a=getLog();
-  a.unshift({f:fname(),b:st.bpm,k:st.key,s:st.style,ft:st.feature,ts:Date.now()});
+  a.unshift({f:fname(),b:st.bpm,k:st.key,s:st.style,snd:st.sound,v:st.vibe,tags:[...st.tags],dup:st.dup,ts:Date.now()});
   setLog(a);toast("Saved");renderLog();
 };
 function renderLog(){
@@ -193,9 +239,18 @@ function renderLog(){
   if(!a.length){list.innerHTML='<div class="empty">まだログなし。SPINして💾で貯まってく</div>';return;}
   a.forEach((e,i)=>{
     const d=document.createElement("div");d.className="logitem";
-    const detail=e.s?`${e.s}-${e.ft||"—"}`:(e.m||"—");
+    const oldDetail=e.s?`${e.s}-${e.ft||"—"}`:(e.m||"—");
+    const detail=e.snd?`${e.s||"—"} · ${e.snd} · ${e.v||"—"}`:oldDetail;
     d.innerHTML=`<div class="li-main"><div class="li-name">${e.f}</div><div class="li-meta">${e.b}BPM · ${e.k} · ${detail}</div></div>`;
-    const c=document.createElement("button");c.textContent="出品";c.onclick=()=>copyText(`【出品】\nファイル名：${e.f}\nBPM：${e.b}\nキー：${e.k}\nSTYLE / FEATURE：${detail}`);
+    const c=document.createElement("button");c.textContent="出品";c.onclick=()=>{
+      if(e.snd){
+        const tagLine=e.tags&&e.tags.length?`\nTAG：${e.tags.join(", ")}`:"";
+        const dupLine=e.dup?`\nDUP：${e.dup}`:"";
+        copyText(`【出品】\nファイル名：${e.f}\nSTYLE：${e.s}\nSOUND：${e.snd}\nVIBE：${e.v}\nBPM：${e.b}\nキー：${e.k}${tagLine}${dupLine}`);
+      }else{
+        copyText(`【出品】\nファイル名：${e.f}\nBPM：${e.b}\nキー：${e.k}\nSTYLE / FEATURE：${oldDetail}`);
+      }
+    };
     const x=document.createElement("button");x.className="del";x.textContent="✕";x.onclick=()=>{const b=getLog();b.splice(i,1);setLog(b);renderLog();};
     d.appendChild(c);d.appendChild(x);list.appendChild(d);
   });
